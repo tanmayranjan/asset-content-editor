@@ -9,6 +9,13 @@ org.ekstep.services.contentService = new (org.ekstep.services.iService.extend({
 	serviceURL: function () {
 		return this.getBaseURL() + this.getAPISlug() + this.getConfig('contentEndPoint', '/content')
 	},
+	assetserviceURL: function() {
+        return (
+          this.getBaseURL() +
+          this.getAPISlug() +
+          this.getConfig("assetEndPoint", "/object/asset")
+        );
+      },
 	learningURL: function () {
 		return this.getBaseURL() + this.getAPISlug() + this.getConfig('learningEndPoint', '/learning')
 	},
@@ -131,24 +138,39 @@ org.ekstep.services.contentService = new (org.ekstep.services.iService.extend({
      *
      * @memberof org.ekstep.services.contentService
      */
-	getContent: function (contentId, callback) {
-		var instance = this
-		if (contentId) {
-			var metaDataFields = '?mode=edit&fields=' + instance.contentFields
-			instance.get(this.serviceURL() + this.getConfig('contentReadUrl', '/v3/read/') + contentId + metaDataFields, this.requestHeaders, function (err, res) {
-				/* istanbul ignore else */
-				if (res && res.data && res.data.responseCode === 'OK') {
-					instance._setContentMeta(contentId, res.data.result.content)
-					callback(err, res.data.result.content)
-				} else {
-					callback(new Error('no content found!'), undefined)
-				}
-			})
-		} else {
-			// eslint-disable-next-line
-			callback('Content id is required to get content from platform', undefined)
-		}
-	},
+	getContent: function(r, i) {
+        var a = this;
+        a.get(
+          this.assetserviceURL() +
+            this.getConfig("assetReadUrl", "/v3/read/") +
+            r,
+          this.requestHeaders,
+          function(e, t) {
+            t && t.data && "OK" === t.data.responseCode
+              ? (a._setContentMeta(r, t.data.result.asset),
+                i(e, t.data.result.asset))
+              : i(new Error("no asset found!"), void 0);
+          }
+        );
+      },
+	saveAssetbody: function(a, b, c, d) {
+        var body = {
+          request: {
+            asset: b
+          }
+        };
+        this.updateAsset(body, a, d);
+      },
+      updateAsset: function(a, t, r) {
+        this.patch(
+          this.assetserviceURL() +
+            this.getConfig("assetUpdateUrl", "/v3/update/") +
+            t,
+          a,
+          this.requestHeaders,
+          r
+        );
+      },
 	/**
      *
      *
