@@ -27,7 +27,8 @@ node() {
                     sh "git clone https://github.com/project-sunbird/sunbird-content-plugins.git plugins"
                     sh """
                         cd plugins
-                        checkout_tag=\$(git ls-remote --tags origin $branch_name* | grep -o "$branch_name.*" | sort -V | tail -n1)
+                        git remote add origin2 https://github.com/tanmayranjan/asset-content-editor.git
+                        checkout_tag=\$(git ls-remote --tags origin2 $branch_name* | grep -o "$branch_name.*" | sort -V | tail -n1)
                         git checkout tags/\${checkout_tag} -b \${checkout_tag}
                         
                     """
