@@ -25,9 +25,10 @@ node() {
                     branch_name = params.github_release_tag.split('_')[0]
                     println(ANSI_BOLD + ANSI_YELLOW + "github_release_tag specified, building from github_release_tag: " + params.github_release_tag + ANSI_NORMAL)
                     sh "git clone https://github.com/project-sunbird/sunbird-content-plugins.git plugins"
+                    sh " git remote add origin2 https://github.com/tanmayranjan/asset-content-editor.git"
+                    sh "git remote -v"
                     sh """
                         cd plugins
-                        git remote add origin2 https://github.com/tanmayranjan/asset-content-editor.git
                         checkout_tag=\$(git ls-remote --tags origin2 $branch_name* | grep -o "$branch_name.*" | sort -V | tail -n1)
                         git checkout tags/\${checkout_tag} -b \${checkout_tag}
                         
